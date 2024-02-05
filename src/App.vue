@@ -5,13 +5,26 @@
       <router-link to="/employee-list">Çalışanları Listele</router-link>
       <router-link to="/leave-entry">İzin Girişi</router-link>
     </nav>
-    <router-view />
+    <router-view :employees="employees" @saveEmployee="addEmployeeToList" />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data() {
+    return {
+      employees: [
+        
+      ],
+    };
+  },
+  methods: {
+    
+    addEmployeeToList(newEmployee) {
+      this.employees.push(newEmployee);
+    },
+  },
 }
 </script>
 
@@ -33,4 +46,3 @@ nav a {
   text-decoration: none;
 }
 </style>
-

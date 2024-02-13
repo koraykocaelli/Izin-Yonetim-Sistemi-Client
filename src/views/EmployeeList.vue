@@ -35,7 +35,49 @@
   </div>
 </template>
 
+
 <script>
+import axios from 'axios';
+
+export default {
+  name: 'EmployeeEntry',
+  data() {
+    return {
+      employee: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        department: '',
+      },
+    };
+  },
+  props: ['updateEmployeesList'], 
+
+  methods: {
+    async saveEmployee() {
+      try {
+        const response = await axios.post('http://localhost:8080/employee/create', this.employee);
+        console.log('Yeni Çalışan Oluşturuldu:', response.data);
+
+        
+        this.updateEmployeesList(response.data);
+
+        
+        this.employee = {
+          firstName: '',
+          lastName: '',
+          email: '',
+          department: '',
+        };
+      } catch (error) {
+        console.error('Hata:', error);
+      }
+    },
+  },
+};
+</script>
+
+<!-- <script>
 export default {
   name: 'EmployeeList',
   props: {
@@ -68,7 +110,7 @@ export default {
     },
   },
 };
-</script>
+</script> -->
 
 <style scoped>
   .container {

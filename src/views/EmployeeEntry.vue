@@ -28,7 +28,46 @@
   </div>
 </template>
 
+
 <script>
+export default {
+  name: 'EmployeeEntry',
+  data() {
+    return {
+      employee: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        department: '',
+      },
+    };
+  },
+  methods: {
+    saveEmployee() {
+      // Yeni çalışan bilgilerini topla
+      const newEmployee = {
+        firstName: this.employee.firstName,
+        lastName: this.employee.lastName,
+        email: this.employee.email,
+        department: this.employee.department,
+      };
+
+      // Oluşturulan yeni çalışan bilgilerini parent component'e emit et
+      this.$emit('employeeAdded', newEmployee);
+
+      // Formu sıfırla
+      this.employee = {
+        firstName: '',
+        lastName: '',
+        email: '',
+        department: '',
+      };
+    },
+  },
+};
+</script>
+
+<!-- <script>
 export default {
   name: 'EmployeeEntry',
   data() {
@@ -70,7 +109,7 @@ export default {
     },
   },
 };
-</script>
+</script> -->
 
 <style scoped>
   .container {

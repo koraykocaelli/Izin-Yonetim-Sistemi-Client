@@ -14,7 +14,7 @@
 
       <div class="form-group">
         <label for="leaveDays" class="form-label">İzin Günleri:</label>
-        <input type="number" id="leaveDays" v-model="leaveDays" class="custom-input" min="1" max="15" />
+        <input type="number" id="leaveDays" v-model="leaveDays" class="custom-input" min="1" :max="maxLeaveDays" />
       </div>
 
       <button type="button" @click="submitLeave" class="custom-button">İzni Kaydet</button>
@@ -23,32 +23,66 @@
 </template>
 
 <script>
+import { getEmployees, updateLeaveDays } from '../common/api.service';
+
 export default {
   name: 'LeaveEntry',
   data() {
     return {
-      employees: [
-        { id: 1, firstName: 'İsim1', lastName: 'Soyisim1', email: 'email1@example.com', department: 'Departman1', leaveDays: 15 },
-        { id: 2, firstName: 'İsim2', lastName: 'Soyisim2', email: 'email2@example.com', department: 'Departman2', leaveDays: 15 },
-      ],
+      employee: [],
       selectedEmployee: null,
-      leaveDays: 1, 
+      leaveDays: 1,
     };
   },
+  created() {
+    // Çalışanları getirme işlemi component oluşturulduğunda yapılacak
+    this.getEmployees();
+  },
   methods: {
+    getEmployees() {
+      getEmployees()
+        .then(response => {
+          this.employee = response.data;
+        })
+        .catch(error => {
+          console.error('Çalışanları getirirken bir hata oluştu:', error);
+        });
+    },
     submitLeave() {
+      if (this.selectedEmployee !== null && this.leaveDays > 0) {
+        const employee = this.employee.find(emp => emp.id === this.selectedEmployee);
+        if (employee) {
+          const updatedLeaveDays = employee.leaveDays - this.leaveDays;
+          updateLeaveDays(this.selectedEmployee, updatedLeaveDays)
+            .then(() => {
+              console.log('Çalışan izni güncellendi:', {
+                employeeId: this.selectedEmployee,
+                leaveDays: this.leaveDays,
+              });
+              // Formu sıfırla
+              this.resetForm();
+            })
+            .catch(error => {
+              console.error('İzin güncelleme işlemi sırasında bir hata oluştu:', error);
+            });
+        }
+      }
+    },
+    resetForm() {
+      // Formu sıfırla
+      this.selectedEmployee = null;
+      this.leaveDays = 1;
+    },
+  },
+  computed: {
+    maxLeaveDays() {
       if (this.selectedEmployee !== null) {
         const employee = this.employees.find(emp => emp.id === this.selectedEmployee);
         if (employee) {
-          
-          const updatedLeaveDays = employee.leaveDays - this.leaveDays;
-          this.$emit('updateLeaveDays', this.selectedEmployee, updatedLeaveDays);
-          console.log('Çalışana Verilen İzin:', {
-            employeeId: this.selectedEmployee,
-            leaveDays: this.leaveDays,
-          });
+          return employee.leaveDays;
         }
       }
+      return 1;
     },
   },
 };

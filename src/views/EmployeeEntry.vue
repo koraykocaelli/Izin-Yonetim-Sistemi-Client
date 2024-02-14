@@ -28,8 +28,10 @@
   </div>
 </template>
 
-
 <script>
+import { saveEmployee } from '../common/api.service';
+import { DEFAULT_LEAVE_DAYS } from '../common/constants';
+
 export default {
   name: 'EmployeeEntry',
   data() {
@@ -39,77 +41,37 @@ export default {
         lastName: '',
         email: '',
         department: '',
+        leaveDays: DEFAULT_LEAVE_DAYS,
       },
     };
   },
   methods: {
     saveEmployee() {
-      // Yeni çalışan bilgilerini topla
-      const newEmployee = {
-        firstName: this.employee.firstName,
-        lastName: this.employee.lastName,
-        email: this.employee.email,
-        department: this.employee.department,
-      };
-
-      // Oluşturulan yeni çalışan bilgilerini parent component'e emit et
-      this.$emit('employeeAdded', newEmployee);
-
+      saveEmployee(this.employee)
+        .then(() => {
+          console.log('Çalışan başarıyla kaydedildi:', this.employee);
+          // Çalışanı başarıyla kaydettikten sonra çalışan listesine ekleyin
+          this.$emit('addEmployeeToList', this.employee);
+          // Formu sıfırlayın
+          this.resetForm();
+        })
+        .catch(error => {
+          console.error('Çalışanı kaydetmede hata oluştu:', error);
+        });
+    },
+    resetForm() {
       // Formu sıfırla
       this.employee = {
         firstName: '',
         lastName: '',
         email: '',
         department: '',
+        leaveDays: DEFAULT_LEAVE_DAYS,
       };
     },
   },
 };
 </script>
-
-<!-- <script>
-export default {
-  name: 'EmployeeEntry',
-  data() {
-    return {
-      employee: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        department: '',
-      },
-    };
-  },
-  methods: {
-    saveEmployee() {
-      
-      const newEmployee = {
-        id: this.generateUniqueId(), 
-        ...this.employee,
-        leaveDays: 15, 
-      };
-
-      
-      this.$emit('addEmployee', newEmployee);
-
-      
-      console.log('Kaydedilen Çalışan:', newEmployee);
-
-      
-      this.employee = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        department: '',
-      };
-    },
-    generateUniqueId() {
-      
-      return Math.random().toString(36).substr(2, 9);
-    },
-  },
-};
-</script> -->
 
 <style scoped>
   .container {

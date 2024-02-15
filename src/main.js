@@ -15,8 +15,6 @@ axios.defaults.baseURL = BASE_URL;
 
 app.use(router)
 
-app.use(VueModal);
-
 app.mount('#app')
 
 

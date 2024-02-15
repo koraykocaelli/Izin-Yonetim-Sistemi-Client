@@ -29,11 +29,9 @@
 </template>
 
 <script>
-import { saveEmployee } from '../common/api.service';
-import { DEFAULT_LEAVE_DAYS } from '../common/constants';
+import { createEmployee } from '../common/api.service';
 
 export default {
-  name: 'EmployeeEntry',
   data() {
     return {
       employee: {
@@ -41,83 +39,79 @@ export default {
         lastName: '',
         email: '',
         department: '',
-        leaveDays: DEFAULT_LEAVE_DAYS,
       },
     };
   },
   methods: {
     saveEmployee() {
-      saveEmployee(this.employee)
-        .then(() => {
-          console.log('Çalışan başarıyla kaydedildi:', this.employee);
-          // Çalışanı başarıyla kaydettikten sonra çalışan listesine ekleyin
-          this.$emit('addEmployeeToList', this.employee);
-          // Formu sıfırlayın
+      createEmployee(this.employee)
+        .then(response => {
+          console.log('Employee saved successfully:', response.data);
+          this.$emit('employeeAdded', response.data);
           this.resetForm();
         })
         .catch(error => {
-          console.error('Çalışanı kaydetmede hata oluştu:', error);
+          console.error('Error saving employee:', error);
         });
     },
     resetForm() {
-      // Formu sıfırla
       this.employee = {
         firstName: '',
         lastName: '',
         email: '',
         department: '',
-        leaveDays: DEFAULT_LEAVE_DAYS,
       };
     },
   },
 };
 </script>
 
+
 <style scoped>
-  .container {
-    text-align: center;
-    margin-top: 50px;
-  }
+.container {
+  text-align: center;
+  margin-top: 50px;
+}
 
-  .page-title {
-    font-size: 40px;
-    margin-bottom: 20px;
-  }
+.page-title {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
 
-  .employee-entry-form {
-    width: 60%;
-    margin: 0 auto;
-  }
+.employee-entry-form {
+  width: 60%;
+  margin: 0 auto;
+}
 
-  .form-group {
-    margin-bottom: 20px;
-  }
+.form-group {
+  margin-bottom: 20px;
+}
 
-  .form-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 20px;
-  }
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 20px;
+}
 
-  .custom-input {
-    width: 100%;
-    height: 35px;
-    font-size: 14px;
-    padding: 5px;
-    box-sizing: border-box;
-  }
+.custom-input {
+  width: 100%;
+  height: 35px;
+  font-size: 14px;
+  padding: 5px;
+  box-sizing: border-box;
+}
 
-  .custom-button {
-    width: 100%;
-    height: 40px;
-    font-size: 20px;
-    background-color: #2ecc71;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
+.custom-button {
+  width: 100%;
+  height: 40px;
+  font-size: 20px;
+  background-color: #2ecc71;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
 
-  .custom-button:hover {
-    background-color: #27ae60;
-  }
+.custom-button:hover {
+  background-color: #27ae60;
+}
 </style>

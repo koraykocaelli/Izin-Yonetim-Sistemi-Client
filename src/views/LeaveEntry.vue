@@ -29,20 +29,19 @@ export default {
   name: 'LeaveEntry',
   data() {
     return {
-      employee: [],
+      employees: [],
       selectedEmployee: null,
       leaveDays: 1,
     };
   },
   created() {
-    // Çalışanları getirme işlemi component oluşturulduğunda yapılacak
     this.getEmployees();
   },
   methods: {
     getEmployees() {
       getEmployees()
         .then(response => {
-          this.employee = response.data;
+          this.employees = response.data;
         })
         .catch(error => {
           console.error('Çalışanları getirirken bir hata oluştu:', error);
@@ -50,7 +49,7 @@ export default {
     },
     submitLeave() {
       if (this.selectedEmployee !== null && this.leaveDays > 0) {
-        const employee = this.employee.find(emp => emp.id === this.selectedEmployee);
+        const employee = this.employees.find(emp => emp.id === this.selectedEmployee);
         if (employee) {
           const updatedLeaveDays = employee.leaveDays - this.leaveDays;
           updateLeaveDays(this.selectedEmployee, updatedLeaveDays)
@@ -59,7 +58,6 @@ export default {
                 employeeId: this.selectedEmployee,
                 leaveDays: this.leaveDays,
               });
-              // Formu sıfırla
               this.resetForm();
             })
             .catch(error => {
@@ -69,7 +67,6 @@ export default {
       }
     },
     resetForm() {
-      // Formu sıfırla
       this.selectedEmployee = null;
       this.leaveDays = 1;
     },

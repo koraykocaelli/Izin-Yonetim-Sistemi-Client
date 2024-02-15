@@ -5,7 +5,7 @@
       <router-link to="/employee-list">Çalışanları Listele</router-link>
       <router-link to="/leave-entry">İzin Girişi</router-link>
     </nav>
-    <router-view />
+    <router-view @employeeAdded="addEmployeeToList" />
   </div>
 </template>
 
@@ -14,12 +14,12 @@ export default {
   name: 'App',
   data() {
     return {
-      employees: [] // Burada boş bir dizi olarak tanımlanabilir.
+      employees: []
     };
   },
   methods: {
     addEmployeeToList(employee) {
-      this.employees.push(employee); // saveEmployee olayı tetiklendiğinde çalışanları listeye ekleyen bir yöntem
+      this.employees.push(employee);
     }
   }
 }

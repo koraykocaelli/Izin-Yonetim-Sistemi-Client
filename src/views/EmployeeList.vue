@@ -2,11 +2,13 @@
   <div class="container">
     <h1 class="page-title">Çalışanlar Listesi</h1>
 
+    <!-- Search bar -->
     <div class="search-bar">
       <label for="employeeSearch">Çalışan Ara:</label>
       <input type="text" id="employeeSearch" v-model="searchQuery" />
     </div>
 
+    <!-- Employee table -->
     <table class="employee-table">
       <thead>
         <tr>
@@ -14,24 +16,17 @@
           <th>Soyadı</th>
           <th>Email</th>
           <th>Departman</th>
-          <th>İzin Günleri</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="employee in filteredEmployees" :key="employee.id" @click="showRemainingLeaveDays(employee)">
+        <tr v-for="employee in filteredEmployees" :key="employee.id" @click="showEmployee(employee)">
           <td>{{ employee.firstName }}</td>
           <td>{{ employee.lastName }}</td>
           <td>{{ employee.email }}</td>
           <td>{{ employee.department }}</td>
-          <td>{{ employee.leaveDays }}</td>
         </tr>
       </tbody>
     </table>
-
-    <VueModal v-if="selectedEmployee" @close="selectedEmployee = null">
-      <h2>{{ selectedEmployee.firstName }} {{ selectedEmployee.lastName }} - İzin Günleri</h2>
-      <p>Kalan İzin Günleri: {{ defaultLeaveDays - selectedEmployee.leaveDays }}</p>
-    </VueModal>
   </div>
 </template>
 
@@ -42,28 +37,26 @@ export default {
   name: 'EmployeeList',
   data() {
     return {
-      employees: [], // employees olarak değiştirildi
-      defaultLeaveDays: 15,
+      employees: [],
       searchQuery: '',
-      selectedEmployee: null,
     };
   },
   created() {
-    // Component oluşturulduğunda çalışanları getir
-    this.getEmployees();
+    this.fetchEmployees();
   },
   methods: {
-    getEmployees() {
+    fetchEmployees() {
       getEmployees()
         .then(response => {
-          this.employees = response.data; // employees veri özelliğine atanır
+          this.employees = response.data;
         })
         .catch(error => {
-          console.error('Çalışanları getirirken bir hata oluştu:', error);
+          console.error('Error fetching employees:', error);
         });
     },
-    showRemainingLeaveDays(employee) {
-      this.selectedEmployee = employee;
+    showEmployee(employee) {
+      // Implement this method to show detailed info of the clicked employee
+      console.log('Selected employee:', employee);
     },
   },
   computed: {
@@ -112,23 +105,5 @@ export default {
 .employee-table th {
   background-color: #3498db;
   color: #fff;
-}
-
-.vue-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
 }
 </style>

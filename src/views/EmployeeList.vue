@@ -16,47 +16,72 @@
           <th>Soyadı</th>
           <th>Email</th>
           <th>Departman</th>
+          <th>Kalan İzin Günleri</th> <!-- Yeni eklenen sütun -->
         </tr>
       </thead>
       <tbody>
-        <tr v-for="employee in filteredEmployees" :key="employee.id" @click="showEmployee(employee)">
+        <tr v-for="employee in filteredEmployees" :key="employee.id" @click="showLeaveDays(employee)">
           <td>{{ employee.firstName }}</td>
           <td>{{ employee.lastName }}</td>
           <td>{{ employee.email }}</td>
           <td>{{ employee.department }}</td>
+          <td>{{ employee.leaveDays }}</td> <!-- Yeni eklenen sütun -->
         </tr>
       </tbody>
     </table>
+
+    <!-- Modal Bileşeni -->
+    <div class="modal" v-if="selectedEmployee">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <h2>Kalan İzin Günleri: </h2>
+        <p>{{ selectedEmployee.leaveDays }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { getEmployees } from '../common/api.service';
+import MyModal from './MyModal.vue';
 
 export default {
   name: 'EmployeeList',
+  components: {
+    MyModal,
+  },
   data() {
     return {
       employees: [],
       searchQuery: '',
+      selectedEmployee: null,
     };
   },
   created() {
     this.fetchEmployees();
   },
   methods: {
+    showLeaveDays(employee) {
+      console.log(employee); // Employee nesnesini konsola yazdır
+      console.log("Kalan izin günleri:", employee.leaveDays);
+      this.selectedEmployee = employee;
+    },
+    closeModal() {
+      // Modalı kapatmak için seçilen çalışanı null'a ayarla
+      this.selectedEmployee = null;
+    },
     fetchEmployees() {
       getEmployees()
         .then(response => {
-          this.employees = response.data;
+          // Her çalışanın default olarak 15 izin günü olmasını sağla
+          this.employees = response.data.map(employee => ({
+            ...employee,
+            leaveDays: 15,
+          }));
         })
         .catch(error => {
           console.error('Error fetching employees:', error);
         });
-    },
-    showEmployee(employee) {
-      // Implement this method to show detailed info of the clicked employee
-      console.log('Selected employee:', employee);
     },
   },
   computed: {
@@ -105,5 +130,39 @@ export default {
 .employee-table th {
   background-color: #3498db;
   color: #fff;
+}
+
+/* Modal stilleri */
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 </style>

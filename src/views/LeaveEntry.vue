@@ -14,7 +14,7 @@
 
       <div class="form-group">
         <label for="leaveDays" class="form-label">İzin Günleri:</label>
-        <input type="number" id="leaveDays" v-model="leaveDays" class="custom-input" min="1" :max="maxLeaveDays" />
+        <input type="number" id="leaveDays" v-model="leaveDays" class="custom-input" min="1" />
       </div>
 
       <button type="button" @click="submitLeave" class="custom-button">İzni Kaydet</button>
@@ -58,6 +58,11 @@ export default {
                 employeeId: this.selectedEmployee,
                 leaveDays: this.leaveDays,
               });
+              // LeaveEntry.vue dosyasındaki veriyi güncelledikten sonra EmployeeList.vue dosyasındaki veriyi de güncelle
+              const updatedEmployee = this.employees.find(emp => emp.id === this.selectedEmployee);
+              if (updatedEmployee) {
+                updatedEmployee.leaveDays = updatedLeaveDays;
+              }
               this.resetForm();
             })
             .catch(error => {
@@ -71,66 +76,55 @@ export default {
       this.leaveDays = 1;
     },
   },
-  computed: {
-    maxLeaveDays() {
-      if (this.selectedEmployee !== null) {
-        const employee = this.employees.find(emp => emp.id === this.selectedEmployee);
-        if (employee) {
-          return employee.leaveDays;
-        }
-      }
-      return 1;
-    },
-  },
 };
 </script>
 
 <style scoped>
-  .page-title {
-    font-size: 40px;
-    text-align: center;
-    margin-bottom: 20px;
-  }
+.page-title {
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-  .leave-entry-form {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 600px;
-    margin: 0 auto;
-  }
+.leave-entry-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
 
-  .form-group {
-    width: 100%;
-    margin-bottom: 15px;
-  }
+.form-group {
+  width: 100%;
+  margin-bottom: 15px;
+}
 
-  .form-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 20px;
-  }
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 20px;
+}
 
-  .custom-select,
-  .custom-input {
-    width: 100%;
-    height: 35px;
-    font-size: 14px;
-    padding: 5px;
-    box-sizing: border-box;
-  }
+.custom-select,
+.custom-input {
+  width: 100%;
+  height: 35px;
+  font-size: 14px;
+  padding: 5px;
+  box-sizing: border-box;
+}
 
-  .custom-button {
-    width: 100%;
-    height: 40px;
-    font-size: 20px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
+.custom-button {
+  width: 100%;
+  height: 40px;
+  font-size: 20px;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
 
-  .custom-button:hover {
-    background-color: #2980b9;
-  }
+.custom-button:hover {
+  background-color: #2980b9;
+}
 </style>

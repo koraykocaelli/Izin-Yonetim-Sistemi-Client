@@ -2,10 +2,11 @@
   <div>
     <h1 class="page-title">İzin Girişi</h1>
 
-    <form class="leave-entry-form">
+    <form class="leave-entry-form" @submit.prevent="submitLeave">
       <div class="form-group">
         <label for="employee" class="form-label">Çalışan Seç:</label>
-        <select id="employee" v-model="selectedEmployee" class="custom-select">
+        <select id="employee" v-model="selectedEmployeeId" class="custom-select">
+          <option :value="null">Seçiniz</option>
           <option v-for="employee in employees" :key="employee.id" :value="employee.id">
             {{ employee.firstName }} {{ employee.lastName }}
           </option>
@@ -13,29 +14,30 @@
       </div>
 
       <div class="form-group">
-        <label for="leaveDays" class="form-label">İzin Günleri:</label>
-        <input type="number" id="leaveDays" v-model="leaveDays" class="custom-input" min="1" />
+        <label for="usedDayOff" class="form-label">Kullanılan İzin Günleri:</label>
+        <input type="number" id="usedDayOff" v-model="usedDayOff" class="custom-input" min="1" max="15" />
       </div>
 
-      <button type="button" @click="submitLeave" class="custom-button">İzni Kaydet</button>
+      <button type="submit" class="custom-button">İzni Kaydet</button>
     </form>
   </div>
 </template>
 
+
 <script>
-import { getEmployees, updateLeaveDays } from '../common/api.service';
+import { getEmployees, updateEmployee } from '../common/api.service';
 
 export default {
   name: 'LeaveEntry',
   data() {
     return {
       employees: [],
-      selectedEmployee: null,
-      leaveDays: 1,
+      selectedEmployeeId: null,
+      usedDayOff: 1,
     };
   },
   created() {
-    this.getEmployees();
+    this.getEmployees(); // Fetch employees when the page is loaded
   },
   methods: {
     getEmployees() {
@@ -44,40 +46,58 @@ export default {
           this.employees = response.data;
         })
         .catch(error => {
-          console.error('Çalışanları getirirken bir hata oluştu:', error);
+          console.error('Error fetching employees:', error);
         });
     },
     submitLeave() {
-      if (this.selectedEmployee !== null && this.leaveDays > 0) {
-        const employee = this.employees.find(emp => emp.id === this.selectedEmployee);
-        if (employee) {
-          const updatedLeaveDays = employee.leaveDays - this.leaveDays;
-          updateLeaveDays(this.selectedEmployee, updatedLeaveDays)
-            .then(() => {
-              console.log('Çalışan izni güncellendi:', {
-                employeeId: this.selectedEmployee,
-                leaveDays: this.leaveDays,
-              });
-              // LeaveEntry.vue dosyasındaki veriyi güncelledikten sonra EmployeeList.vue dosyasındaki veriyi de güncelle
-              const updatedEmployee = this.employees.find(emp => emp.id === this.selectedEmployee);
-              if (updatedEmployee) {
-                updatedEmployee.leaveDays = updatedLeaveDays;
-              }
-              this.resetForm();
-            })
-            .catch(error => {
-              console.error('İzin güncelleme işlemi sırasında bir hata oluştu:', error);
-            });
-        }
+  // Form alanlarının doğru şekilde doldurulduğunu kontrol et
+  if (this.selectedEmployeeId && this.usedDayOff > 0) {
+    // Seçilen çalışanın verisini bul
+    const selectedEmployee = this.employees.find(emp => emp.id === this.selectedEmployeeId);
+    // Seçilen çalışan varsa
+    if (selectedEmployee) {
+      // Çalışanın izin gün sayısının, kullanılan izin günlerinden fazla veya eşit olduğundan emin ol
+      if (selectedEmployee.dayOff >= this.usedDayOff) {
+        // Güncellenecek çalışan verisini hazırla
+        const updatedEmployeeData = {
+          firstName: selectedEmployee.firstName,
+          lastName: selectedEmployee.lastName,
+          email: selectedEmployee.email,
+          department: selectedEmployee.department,
+          dayOff: selectedEmployee.dayOff,
+          usedDayOff: this.usedDayOff
+        };
+        // İsteği gönder ve ardından işlemi tamamla
+        updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
+          .then(() => {
+            console.log('Leave days updated successfully');
+            this.getEmployees();
+            this.resetForm();
+          })
+          .catch(error => {
+            console.error('Error updating leave days:', error);
+          });
+      } else {
+        // Eğer çalışanın izin günü yetersizse
+        console.error('Çalışanın izin günü yetersiz.');
       }
-    },
+    } else {
+      // Eğer seçilen çalışan bulunamazsa
+      console.error('Çalışan bulunamadı.');
+    }
+  } else {
+    // Eğer form alanları doğru şekilde doldurulmazsa
+    console.error('Çalışan seçilmedi veya izin günü geçersiz.');
+  }
+},
     resetForm() {
-      this.selectedEmployee = null;
-      this.leaveDays = 1;
+      this.selectedEmployeeId = null;
+      this.usedDayOff = 1;
     },
   },
 };
 </script>
+
 
 <style scoped>
 .page-title {

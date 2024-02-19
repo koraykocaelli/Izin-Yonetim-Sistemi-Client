@@ -16,16 +16,16 @@
           <th>Soyadı</th>
           <th>Email</th>
           <th>Departman</th>
-          <th>Kalan İzin Günleri</th> <!-- Yeni eklenen sütun -->
+          <th>Kalan İzin Günleri</th> 
         </tr>
       </thead>
       <tbody>
-        <tr v-for="employee in filteredEmployees" :key="employee.id" @click="showLeaveDays(employee)">
+        <tr v-for="employee in filteredEmployees" :key="employee.id" @click="showDayOff(employee)">
           <td>{{ employee.firstName }}</td>
           <td>{{ employee.lastName }}</td>
           <td>{{ employee.email }}</td>
           <td>{{ employee.department }}</td>
-          <td>{{ employee.leaveDays }}</td> <!-- Yeni eklenen sütun -->
+          <td>{{ employee.dayOff }}</td>
         </tr>
       </tbody>
     </table>
@@ -35,21 +35,17 @@
       <div class="modal-content">
         <span class="close" @click="closeModal">&times;</span>
         <h2>Kalan İzin Günleri: </h2>
-        <p>{{ selectedEmployee.leaveDays }}</p>
+        <p>{{ selectedEmployee.dayOff }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getEmployees } from '../common/api.service';
-import MyModal from './MyModal.vue';
+import { getEmployees, updateEmployee } from '../common/api.service';
 
 export default {
   name: 'EmployeeList',
-  components: {
-    MyModal,
-  },
   data() {
     return {
       employees: [],
@@ -61,40 +57,54 @@ export default {
     this.fetchEmployees();
   },
   methods: {
-    showLeaveDays(employee) {
-      console.log(employee); // Employee nesnesini konsola yazdır
-      console.log("Kalan izin günleri:", employee.leaveDays);
+    showDayOff(employee) {
+      console.log("Kalan izin günleri:", employee.dayOff);
       this.selectedEmployee = employee;
     },
     closeModal() {
-      // Modalı kapatmak için seçilen çalışanı null'a ayarla
       this.selectedEmployee = null;
     },
     fetchEmployees() {
       getEmployees()
         .then(response => {
-          // Her çalışanın default olarak 15 izin günü olmasını sağla
-          this.employees = response.data.map(employee => ({
-            ...employee,
-            leaveDays: 15,
-          }));
+          this.employees = response.data;
         })
         .catch(error => {
           console.error('Error fetching employees:', error);
         });
     },
+    updateEmployeeDayOff() {
+      if (this.selectedEmployee && this.selectedEmployee.id) {
+        updateEmployee(this.selectedEmployee.id, this.selectedEmployee)
+          .then(() => {
+            console.log('Leave days updated successfully');
+            this.fetchEmployees();
+          })
+          .catch(error => {
+            console.error('Error updating leave days:', error);
+          });
+      } else {
+        console.error('Çalışan seçilmedi.');
+      }
+    },
   },
   computed: {
     filteredEmployees() {
-      const query = this.searchQuery.toLowerCase();
-      return this.employees.filter(employee =>
+  const query = this.searchQuery.toLowerCase();
+  return this.employees.filter(employee => {
+    if (employee.firstName && employee.lastName && employee.email && employee.department) {
+      return (
         employee.firstName.toLowerCase().includes(query) ||
         employee.lastName.toLowerCase().includes(query) ||
         employee.email.toLowerCase().includes(query) ||
         employee.department.toLowerCase().includes(query)
       );
+    }
+    return false;
+  });
+}
     },
-  },
+
 };
 </script>
 

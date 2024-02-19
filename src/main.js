@@ -16,7 +16,7 @@ axios.defaults.baseURL = BASE_URL;
 app.use(router)
 
 app.mount('#app')
-
+  
 
 
 

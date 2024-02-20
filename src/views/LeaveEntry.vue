@@ -23,7 +23,6 @@
   </div>
 </template>
 
-
 <script>
 import { getEmployees, updateEmployee } from '../common/api.service';
 
@@ -32,7 +31,7 @@ export default {
   data() {
     return {
       employees: [],
-      selectedEmployeeId: null,
+      selectedEmployeeId: [],
       usedDayOff: 1,
     };
   },
@@ -50,46 +49,36 @@ export default {
         });
     },
     submitLeave() {
-  // Form alanlarının doğru şekilde doldurulduğunu kontrol et
-  if (this.selectedEmployeeId && this.usedDayOff > 0) {
-    // Seçilen çalışanın verisini bul
-    const selectedEmployee = this.employees.find(emp => emp.id === this.selectedEmployeeId);
-    // Seçilen çalışan varsa
-    if (selectedEmployee) {
-      // Çalışanın izin gün sayısının, kullanılan izin günlerinden fazla veya eşit olduğundan emin ol
-      if (selectedEmployee.dayOff >= this.usedDayOff) {
-        // Güncellenecek çalışan verisini hazırla
-        const updatedEmployeeData = {
-          firstName: selectedEmployee.firstName,
-          lastName: selectedEmployee.lastName,
-          email: selectedEmployee.email,
-          department: selectedEmployee.department,
-          dayOff: selectedEmployee.dayOff,
-          usedDayOff: this.usedDayOff
-        };
-        // İsteği gönder ve ardından işlemi tamamla
-        updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
-          .then(() => {
-            console.log('Leave days updated successfully');
-            this.getEmployees();
-            this.resetForm();
-          })
-          .catch(error => {
-            console.error('Error updating leave days:', error);
-          });
+      // Form alanlarının doğru şekilde doldurulduğunu kontrol et
+      console.log('Selected employee ID:', this.selectedEmployeeId);
+      console.log('Used day off:', this.usedDayOff);
+
+      if (this.selectedEmployeeId || this.usedDayOff > 0) {
+        const selectedEmployee = this.employees.find(emp => emp.id === this.selectedEmployeeId);
+        if (selectedEmployee) {
+          if (selectedEmployee.dayOff >= this.usedDayOff) {
+            const updatedEmployeeData = {
+              dayOff: selectedEmployee.dayOff,
+              usedDayOff: this.usedDayOff
+            };
+
+            updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
+              .then(() => {
+                console.log('Leave days updated successfully');
+                this.getEmployees();
+                this.resetForm();
+              })
+              .catch(error => {
+                console.error('Error updating leave days:', error);
+              });
+          }
+        } else {
+          console.error('Çalışan bulunamadı.');
+        }
       } else {
-        // Eğer çalışanın izin günü yetersizse
-        console.error('Çalışanın izin günü yetersiz.');
+        console.error('Çalışan seçilmedi veya izin günü geçersiz.');
       }
-    } else {
-      // Eğer seçilen çalışan bulunamazsa
-      console.error('Çalışan bulunamadı.');
-    }
-  } else {
-    // Eğer form alanları doğru şekilde doldurulmazsa
-    console.error('Çalışan seçilmedi veya izin günü geçersiz.');
-  }
-},
+    },
     resetForm() {
       this.selectedEmployeeId = null;
       this.usedDayOff = 1;
@@ -97,7 +86,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .page-title {

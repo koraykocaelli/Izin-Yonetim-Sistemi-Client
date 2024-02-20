@@ -25,12 +25,14 @@ export function updateEmployee(employeeId, employeeData) {
         usedDayOff: employeeData.usedDayOff // New property added to match backend
     };
 
-    return axios.put(`/employee/edit/${employeeId}`, updatedEmployeeData).then(response => {
-        return response.data; // Return the response from the backend
-    }).catch(err => {
-        console.error(err);
-        throw new Error('Http Put Error : api.service');
-    });
+    return axios.put(`/employee/edit/${employeeId}`, updatedEmployeeData)
+        .then(response => {
+            return response.data; // Return the response from the backend
+        })
+        .catch(err => {
+            console.error(err);
+            throw new Error('Http Put Error : api.service');
+        });
 }
 
 export function createEmployee(employee) {

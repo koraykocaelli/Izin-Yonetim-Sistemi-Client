@@ -74,18 +74,20 @@ export default {
         });
     },
     updateEmployeeDayOff() {
-      if (this.selectedEmployee && this.selectedEmployee.id) {
-        updateEmployee(this.selectedEmployee.id, this.selectedEmployee)
-          .then(() => {
-            console.log('Leave days updated successfully');
-            this.fetchEmployees();
-          })
-          .catch(error => {
-            console.error('Error updating leave days:', error);
-          });
-      } else {
-        console.error('Çalışan seçilmedi.');
-      }
+  if (this.selectedEmployee && this.selectedEmployee.id) {
+    updateEmployee(this.selectedEmployee.id, this.selectedEmployee)
+      .then(() => {
+        console.log('Leave days updated successfully');
+        this.fetchEmployees(); // Güncelleme işlemi sonrasında çalışan verilerini yeniden al
+      })
+      .catch(error => {
+        console.error('Error updating leave days:', error);
+      });
+  } else {
+    console.error('Çalışan seçilmedi.');
+  }
+
+
     },
   },
   computed: {

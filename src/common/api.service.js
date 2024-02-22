@@ -14,9 +14,8 @@ export function post(path = '', params) {
     });
 }
 
-export function updateEmployee(id) {
-
-    return axios.put(`/employee/edit/${id}`)
+export function updateEmployee(id, employeeData) {
+    return axios.put(`/employee/edit/${id}`, employeeData)
         .then(response => {
             return response.data;
         })

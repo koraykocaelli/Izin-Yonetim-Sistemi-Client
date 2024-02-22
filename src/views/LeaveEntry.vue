@@ -49,36 +49,37 @@ export default {
         });
     },
     submitLeave() {
-      console.log('Seçilen Çalışan:', this.selectedEmployeeId);
-      console.log('Kullanılan İzin Günleri:', this.usedDayOff);
+    console.log('Seçilen Çalışan:', this.selectedEmployeeId);
+    console.log('Kullanılan İzin Günleri:', this.usedDayOff);
 
-      if (this.selectedEmployeeId || this.usedDayOff > 0) {
+    if (this.selectedEmployeeId || this.usedDayOff > 0) {
         const selectedEmployee = this.employees.find(emp => emp.id === this.selectedEmployeeId);
         if (selectedEmployee) {
-          if (selectedEmployee.dayOff >= this.usedDayOff) {
-            const updatedEmployeeData = {
-              dayOff: selectedEmployee.dayOff,
-              usedDayOff: this.usedDayOff
-            };
+            if (selectedEmployee.dayOff >= this.usedDayOff) {
+                const updatedEmployeeData = {
+                    dayOff: selectedEmployee.dayOff,
+                    usedDayOff: this.usedDayOff
+                };
 
-            // Burada updateEmployee fonksiyonunu çağırırken iki parametre geçmelisiniz: id ve employeeData
-            updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
-              .then(() => {
-                console.log('Leave days updated successfully');
-                this.getEmployees();
-                this.resetForm();
-              })
-              .catch(error => {
-                console.error('Error updating leave days:', error);
-              });
-          }
+                // Burada updateEmployee fonksiyonunu çağırırken iki parametre geçmelisiniz: id ve employeeData
+                updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
+                    .then(() => {
+                        console.log('Leave days updated successfully');
+                        this.getEmployees();
+                        this.resetForm();
+                    })
+                    .catch(error => {
+                        console.error('Error updating leave days:', error);
+                    });
+            }
         } else {
-          console.error('Çalışan bulunamadı.');
+            console.error('Çalışan bulunamadı.');
         }
-      } else {
+    } else {
         console.error('Çalışan seçilmedi veya izin günü geçersiz.');
-      }
-    },
+    }
+},
+
     resetForm() {
       this.selectedEmployeeId = null;
       this.usedDayOff = 1;

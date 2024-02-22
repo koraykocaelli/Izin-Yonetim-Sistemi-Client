@@ -31,12 +31,12 @@ export default {
   data() {
     return {
       employees: [],
-      selectedEmployeeId: [],
+      selectedEmployeeId: null,
       usedDayOff: 1,
     };
   },
   created() {
-    this.getEmployees(); // Fetch employees when the page is loaded
+    this.getEmployees(); // Sayfa yüklendiğinde çalışanları al
   },
   methods: {
     getEmployees() {
@@ -49,9 +49,8 @@ export default {
         });
     },
     submitLeave() {
-      // Form alanlarının doğru şekilde doldurulduğunu kontrol et
-      console.log('Selected employee ID:', this.selectedEmployeeId);
-      console.log('Used day off:', this.usedDayOff);
+      console.log('Seçilen Çalışan:', this.selectedEmployeeId);
+      console.log('Kullanılan İzin Günleri:', this.usedDayOff);
 
       if (this.selectedEmployeeId || this.usedDayOff > 0) {
         const selectedEmployee = this.employees.find(emp => emp.id === this.selectedEmployeeId);
@@ -62,6 +61,7 @@ export default {
               usedDayOff: this.usedDayOff
             };
 
+            // Burada updateEmployee fonksiyonunu çağırırken iki parametre geçmelisiniz: id ve employeeData
             updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
               .then(() => {
                 console.log('Leave days updated successfully');

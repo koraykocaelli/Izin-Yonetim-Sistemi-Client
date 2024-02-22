@@ -14,20 +14,11 @@ export function post(path = '', params) {
     });
 }
 
-export function updateEmployee(employeeId, employeeData) {
-    // Update the employeeData object to match the backend's data structure
-    const updatedEmployeeData = {
-        firstName: employeeData.firstName,
-        lastName: employeeData.lastName,
-        email: employeeData.email,
-        department: employeeData.department,
-        dayOff: employeeData.dayOff, // New property added to match backend
-        usedDayOff: employeeData.usedDayOff // New property added to match backend
-    };
+export function updateEmployee(id) {
 
-    return axios.put(`/employee/edit/${employeeId}`, updatedEmployeeData)
+    return axios.put(`/employee/edit/${id}`)
         .then(response => {
-            return response.data; // Return the response from the backend
+            return response.data;
         })
         .catch(err => {
             console.error(err);

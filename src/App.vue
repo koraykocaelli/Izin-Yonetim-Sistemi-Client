@@ -1,10 +1,13 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/employee-entry">Çalışan Girişi</router-link>
-      <router-link to="/employee-list">Çalışanları Listele</router-link>
-      <router-link to="/leave-entry">İzin Girişi</router-link>
-    </nav>
+    <header>
+      <h1 class="logo">İZİN TAKİP SİSTEMİ</h1>
+      <nav>
+        <router-link to="/employee-entry">Çalışan Girişi</router-link>
+        <router-link to="/employee-list">Çalışanları Listele</router-link>
+        <router-link to="/leave-entry">İzin Girişi</router-link>
+      </nav>
+    </header>
     <router-view @employeeAdded="addEmployeeToList" />
   </div>
 </template>
@@ -26,20 +29,45 @@ export default {
 </script>
 
 <style>
+
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #2c3e50; 
+    color: #fff; 
+  }
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
-  color: #2c3e50;
+  color: #fff; 
   margin-top: 60px;
+  background-color: #34495e; 
+}
+
+header {
+  background-color: #2c3e50;
+  padding: 10px 0;
+}
+
+.logo {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 10px;
 }
 
 nav {
-  background-color: #f8f9fa;
-  padding: 10px;
+  margin-top: 10px;
 }
 
 nav a {
-  margin: 0 10px;
+  margin: 0 15px;
   text-decoration: none;
+  color: #fff;
+  font-size: 18px;
+}
+
+nav a:hover {
+  text-decoration: underline;
 }
 </style>

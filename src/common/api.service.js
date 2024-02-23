@@ -32,10 +32,16 @@ export function createEmployee(employee) {
     });
 }
 
+export function deleteEmployee(id) {
+    return axios.delete(`/employee/remove/${id}`).catch(err => {
+        console.error(err);
+        throw new Error('Http Delete Error : api.service');
+    });
+}
+
 export function getEmployees() {
     return axios.get('/employee/getAll').catch(err => {
         console.error(err);
         throw new Error('Http Get Employees Error : api.service');
     });
 }
-

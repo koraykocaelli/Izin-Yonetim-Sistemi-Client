@@ -1,42 +1,56 @@
+<!-- Modal.vue -->
 <template>
-  <VueFinalModal v-if="isOpen" @close="closeModal">
-    <h1>Çalışanın İzin Günleri</h1>
-    <p>Adı: {{ selectedEmployee.firstName }}</p>
-    <p>Soyadı: {{ selectedEmployee.lastName }}</p>
-    <p>Email: {{ selectedEmployee.email }}</p>
-    <p>Departman: {{ selectedEmployee.department }}</p>
-    <p>Kalan İzin Günleri: {{ selectedEmployee.leaveDays }}</p>
-    <button @click="closeModal">Close Modal</button>
-  </VueFinalModal>
+  <div class="modal" v-if="selectedEmployee">
+    <div class="modal-content">
+      <span class="close" @click="closeModal">&times;</span>
+      <h2>Kalan İzin Günleri: </h2>
+      <p>{{ selectedEmployee.dayOff }}</p>
+    </div>
+  </div>
 </template>
 
 <script>
-import { ref } from 'vue';
-import { VueFinalModal } from 'vue-final-modal';
-
 export default {
-  components: {
-    VueFinalModal,
-  },
-  props: {
-    selectedEmployee: Object // Ana bileşenden gelen seçili çalışan verisi
-  },
-  setup() {
-    const isOpen = ref(false);
-
-    const openModal = () => {
-      isOpen.value = true;
-    };
-
-    const closeModal = () => {
-      isOpen.value = false;
-    };
-
-    return {
-      isOpen,
-      openModal,
-      closeModal,
-    };
+  props: ['selectedEmployee'],
+  methods: {
+    closeModal() {
+      this.$emit('close');
+    },
   },
 };
 </script>
+
+<style scoped>
+.modal {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>

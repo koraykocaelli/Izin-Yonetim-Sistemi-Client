@@ -1,5 +1,6 @@
+<!-- LeaveEntry.vue -->
 <template>
-  <div>
+  <div class="container">
     <h1 class="page-title">İzin Girişi</h1>
 
     <form class="leave-entry-form" @submit.prevent="submitLeave">
@@ -36,7 +37,7 @@ export default {
     };
   },
   created() {
-    this.getEmployees(); // Sayfa yüklendiğinde çalışanları al
+    this.getEmployees(); 
   },
   methods: {
     getEmployees() {
@@ -49,37 +50,32 @@ export default {
         });
     },
     submitLeave() {
-    console.log('Seçilen Çalışan:', this.selectedEmployeeId);
-    console.log('Kullanılan İzin Günleri:', this.usedDayOff);
-
-    if (this.selectedEmployeeId || this.usedDayOff > 0) {
+      if (this.selectedEmployeeId || this.usedDayOff > 0) {
         const selectedEmployee = this.employees.find(emp => emp.id === this.selectedEmployeeId);
         if (selectedEmployee) {
-            if (selectedEmployee.dayOff >= this.usedDayOff) {
-                const updatedEmployeeData = {
-                    dayOff: selectedEmployee.dayOff,
-                    usedDayOff: this.usedDayOff
-                };
-
-                // Burada updateEmployee fonksiyonunu çağırırken iki parametre geçmelisiniz: id ve employeeData
-                updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
-                    .then(() => {
-                        console.log('Leave days updated successfully');
-                        this.getEmployees();
-                        this.resetForm();
-                    })
-                    .catch(error => {
-                        console.error('Error updating leave days:', error);
-                    });
-            }
+          if (selectedEmployee.dayOff >= this.usedDayOff) {
+            const updatedEmployeeData = {
+              ...selectedEmployee,
+              dayOff: selectedEmployee.dayOff,
+              usedDayOff: this.usedDayOff
+            };
+            updateEmployee(this.selectedEmployeeId, updatedEmployeeData)
+              .then(() => {
+                console.log('Leave days updated successfully');
+                this.getEmployees();
+                this.resetForm();
+              })
+              .catch(error => {
+                console.error('Error updating leave days:', error);
+              });
+          }
         } else {
-            console.error('Çalışan bulunamadı.');
+          console.error('Çalışan bulunamadı.');
         }
-    } else {
+      } else {
         console.error('Çalışan seçilmedi veya izin günü geçersiz.');
-    }
-},
-
+      }
+    },
     resetForm() {
       this.selectedEmployeeId = null;
       this.usedDayOff = 1;
@@ -89,51 +85,62 @@ export default {
 </script>
 
 <style scoped>
+body, html {
+    margin: 0;
+    padding: 0;
+    background-color: #2c3e50; /* Arka plan rengi daha koyu mavi */
+    color: #fff; /* Yazı rengi beyaz */
+  }
+
 .page-title {
-  font-size: 40px;
+  font-size: 32px;
   text-align: center;
   margin-bottom: 20px;
+  color: #eee; /* Yazı rengi beyazdan açık griye */
 }
 
 .leave-entry-form {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 auto;
+  padding: 20px;
+  background-color: #2c3e50; /* Arka plan rengi koyu gri */
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
-  width: 100%;
   margin-bottom: 15px;
 }
 
 .form-label {
-  display: block;
+  font-size: 18px;
   margin-bottom: 5px;
-  font-size: 20px;
+  color: #eee; /* Yazı rengi beyazdan açık griye */
 }
 
 .custom-select,
 .custom-input {
   width: 100%;
-  height: 35px;
-  font-size: 14px;
-  padding: 5px;
+  height: 40px;
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   box-sizing: border-box;
 }
 
 .custom-button {
   width: 100%;
   height: 40px;
-  font-size: 20px;
-  background-color: #3498db;
+  font-size: 18px;
+  background-color: #3498db; 
   color: #fff;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease; 
 }
 
 .custom-button:hover {
-  background-color: #2980b9;
+  background-color: #2980b9; 
 }
 </style>
